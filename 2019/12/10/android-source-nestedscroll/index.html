@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/project/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/project/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/project/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/project/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/project/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"peceoqicka.github.io","root":"/project/","images":"/project/images","scheme":"Pisces","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/project/js/config.js"></script>
+<meta name="description" content="Nested Scroll 当一个可滑动ViewGroup内部包含另一个可滑动View，用户触摸内部可滑动View时，应当首先滑动内部View，内部View滑不动时外部ViewGroup应接着进行滑动  以上描述的是用户预期的体验，但是事实上，这种效果违背了一个事件只有一个View进行消费的约定，因此按照常规的Touch事件分发机制这种效果是很难实现的。所以需要一套全新的滑动机制——Nested">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android NestedScroll 嵌套滑动机制学习笔记">
+<meta property="og:url" content="http://peceoqicka.github.io/project/2019/12/10/android-source-nestedscroll/index.html">
+<meta property="og:site_name" content="Peceoqicka的博客">
+<meta property="og:description" content="Nested Scroll 当一个可滑动ViewGroup内部包含另一个可滑动View，用户触摸内部可滑动View时，应当首先滑动内部View，内部View滑不动时外部ViewGroup应接着进行滑动  以上描述的是用户预期的体验，但是事实上，这种效果违背了一个事件只有一个View进行消费的约定，因此按照常规的Touch事件分发机制这种效果是很难实现的。所以需要一套全新的滑动机制——Nested">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-12-10T01:34:18.000Z">
+<meta property="article:modified_time" content="2020-01-19T07:06:53.967Z">
+<meta property="article:author" content="Peceoqicka">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://peceoqicka.github.io/project/2019/12/10/android-source-nestedscroll/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://peceoqicka.github.io/project/2019/12/10/android-source-nestedscroll/","path":"2019/12/10/android-source-nestedscroll/","title":"Android NestedScroll 嵌套滑动机制学习笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Android NestedScroll 嵌套滑动机制学习笔记 | Peceoqicka的博客</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/project/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/project/atom.xml" title="Peceoqicka的博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/project/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Peceoqicka的博客</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/project/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/project/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/project/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/project/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Nested-Scroll"><span class="nav-number">1.</span> <span class="nav-text">Nested Scroll</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Peceoqicka"
+      src="/project/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Peceoqicka</p>
+  <div class="site-description" itemprop="description">愿中国青年都摆脱冷气，只是向上走，不必听自暴自弃者的话.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/project/archives/">
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/project/categories/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/project/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/peceoqicka" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://peceoqicka.github.io/project/2019/12/10/android-source-nestedscroll/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/project/images/avatar.jpg">
+      <meta itemprop="name" content="Peceoqicka">
+      <meta itemprop="description" content="愿中国青年都摆脱冷气，只是向上走，不必听自暴自弃者的话.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Peceoqicka的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android NestedScroll 嵌套滑动机制学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-12-10 09:34:18" itemprop="dateCreated datePublished" datetime="2019-12-10T09:34:18+08:00">2019-12-10</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-01-19 15:06:53" itemprop="dateModified" datetime="2020-01-19T15:06:53+08:00">2020-01-19</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Nested-Scroll"><a href="#Nested-Scroll" class="headerlink" title="Nested Scroll"></a>Nested Scroll</h1><blockquote>
+<p>当一个可滑动ViewGroup内部包含另一个可滑动View，用户触摸内部可滑动View时，应当首先滑动内部View，内部View滑不动时外部ViewGroup应接着进行滑动</p>
+</blockquote>
+<p>以上描述的是用户预期的体验，但是事实上，这种效果违背了一个事件只有一个View进行消费的约定，因此按照常规的Touch事件分发机制这种效果是很难实现的。所以需要一套全新的滑动机制——<code>Nested Scroll（嵌套滑动）</code></p>
+<p><strong>嵌套滑动</strong>是由内部View发起，可由内部View和外部View共同消费一个事件的机制。当检测到一个滑动事件的时候，先由内部View开启嵌套滑动，交由外部View预先进行滑动距离消费，没有消费完的由内部View进行消费，如果内部View还是没有消费完，再交由外部View消费，如此反复，直至消费完为止。消费顺序即<code>parent-&gt;child-&gt;parent-&gt;child-&gt;...-&gt;child</code></p>
+<p>嵌套滑动是在5.0之后添加到View和ViewGroup中给几乎所有的View增加了支持的一系列代码，如使用频率极高的<strong>RecyclerView</strong>、<strong>NestedScrollView</strong>等。而与此同时，Google将其中的主要方法和辅助工具类提炼了出来，以供开发者们在自定义View时使用。</p>
+<p><strong>NestedScrollingChild（省略了Fling相关的方法）</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">NestedScrollingChild</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">setNestedScrollingEnabled</span><span class="params">(<span class="keyword">boolean</span> enabled)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">isNestedScrollingEnabled</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">startNestedScroll</span><span class="params">(<span class="meta">@ScrollAxis</span> <span class="keyword">int</span> axes)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">stopNestedScroll</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">hasNestedScrollingParent</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">dispatchNestedScroll</span><span class="params">(<span class="keyword">int</span> dxConsumed, <span class="keyword">int</span> dyConsumed,</span></span></span><br><span class="line"><span class="params"><span class="function">    	<span class="keyword">int</span> dxUnconsumed, <span class="keyword">int</span> dyUnconsumed,</span></span></span><br><span class="line"><span class="params"><span class="function">    		<span class="meta">@Nullable</span> <span class="keyword">int</span>[] offsetInWindow)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">dispatchNestedPreScroll</span><span class="params">(<span class="keyword">int</span> dx, <span class="keyword">int</span> dy, </span></span></span><br><span class="line"><span class="params"><span class="function">		<span class="meta">@Nullable</span> <span class="keyword">int</span>[] consumed, <span class="meta">@Nullable</span> <span class="keyword">int</span>[] offsetInWindow)</span></span></span><br><span class="line"><span class="function">	......</span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+<p><strong>NestedScrollingParent（省略了Fling相关的方法）</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">NestedScrollingParent</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">onStartNestedScroll</span><span class="params">(<span class="meta">@NonNull</span> View child, <span class="meta">@NonNull</span> View target, <span class="meta">@ScrollAxis</span> <span class="keyword">int</span> axes)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onNestedScrollAccepted</span><span class="params">(<span class="meta">@NonNull</span> View child, <span class="meta">@NonNull</span> View target, <span class="meta">@ScrollAxis</span> <span class="keyword">int</span> axes)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onStopNestedScroll</span><span class="params">(<span class="meta">@NonNullView</span> target)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onNestedScroll</span><span class="params">(<span class="meta">@NonNull</span> View target, <span class="keyword">int</span> dxConsumed, <span class="keyword">int</span> dyConsumed, <span class="keyword">int</span> dxUnconsumed, <span class="keyword">int</span> dyUnconsumed)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onNestedPreScroll</span><span class="params">(<span class="meta">@NonNull</span> View target, <span class="keyword">int</span> dx, <span class="keyword">int</span> dy, <span class="meta">@NonNull</span> <span class="keyword">int</span>[] consumed)</span></span>;</span><br><span class="line">	......</span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">getNestedScrollAxes</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>第二版接口相比于第一版，主要区别是，其中一些方法添加了一个滑动类型参数（触摸、惯性滑动）</strong></p>
+<p><strong>NestedScrollingChild2</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">NestedScrollingChild2</span> <span class="keyword">extends</span> <span class="title">NestedScrollingChild</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">startNestedScroll</span><span class="params">(<span class="meta">@ScrollAxis</span> <span class="keyword">int</span> axes, <span class="meta">@NestedScrollType</span> <span class="keyword">int</span> type)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">stopNestedScroll</span><span class="params">(<span class="meta">@NestedScrollType</span> <span class="keyword">int</span> type)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">hasNestedScrollingParent</span><span class="params">(<span class="meta">@NestedScrollType</span> <span class="keyword">int</span> type)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">dispatchNestedScroll</span><span class="params">(<span class="keyword">int</span> dxConsumed, <span class="keyword">int</span> dyConsumed, <span class="keyword">int</span> dxUnconsumed, <span class="keyword">int</span> dyUnconsumed, <span class="meta">@Nullable</span> <span class="keyword">int</span>[] offsetInWindow, <span class="meta">@NestedScrollType</span> <span class="keyword">int</span> type)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">dispatchNestedPreScroll</span><span class="params">(<span class="keyword">int</span> dx, <span class="keyword">int</span> dy, <span class="meta">@Nullable</span> <span class="keyword">int</span>[] consumed, <span class="meta">@Nullable</span> <span class="keyword">int</span>[] offsetInWindow, <span class="meta">@NestedScrollType</span> <span class="keyword">int</span> type)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>NestedScrollingParent2</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">NestedScrollingParent2</span>  <span class="keyword">extends</span> <span class="title">NestedScrollingParent</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">onStartNestedScroll</span><span class="params">(<span class="meta">@NonNull</span> View child, <span class="meta">@NonNull</span> View target, <span class="meta">@ScrollAxis</span> <span class="keyword">int</span> axes, <span class="meta">@NestedScrollType</span> <span class="keyword">int</span> type)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onNestedScrollAccepted</span><span class="params">(<span class="meta">@NonNull</span> View child, <span class="meta">@NonNull</span> View target, <span class="meta">@ScrollAxis</span> <span class="keyword">int</span> axes, <span class="meta">@NestedScrollType</span> <span class="keyword">int</span> type)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onStopNestedScroll</span><span class="params">(<span class="meta">@NonNullView</span> target, <span class="meta">@NestedScrollType</span> <span class="keyword">int</span> type)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onNestedScroll</span><span class="params">(<span class="meta">@NonNull</span> View target, <span class="keyword">int</span> dxConsumed, <span class="keyword">int</span> dyConsumed, <span class="keyword">int</span> dxUnconsumed, <span class="keyword">int</span> dyUnconsumed, <span class="meta">@NestedScrollType</span> <span class="keyword">int</span> type)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onNestedPreScroll</span><span class="params">(<span class="meta">@NonNull</span> View target, <span class="keyword">int</span> dx, <span class="keyword">int</span> dy, <span class="meta">@NonNull</span> <span class="keyword">int</span>[] consumed, <span class="meta">@NestedScrollType</span> <span class="keyword">int</span> type)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>第三版接口再一次添加了一个记录<code>已消耗的滑动距离</code>的参数</strong></p>
+<p><strong>NestedScrollingChild3</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">NestedScrollingChild3</span> <span class="keyword">extends</span> <span class="title">NestedScrollingChild2</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">dispatchNestedScroll</span><span class="params">(<span class="keyword">int</span> dxConsumed, <span class="keyword">int</span> dyConsumed, <span class="keyword">int</span> dxUnconsumed, <span class="keyword">int</span> dyUnconsumed, <span class="meta">@Nullable</span> <span class="keyword">int</span>[] offsetInWindow, <span class="meta">@NestedScrollType</span> <span class="keyword">int</span> type, <span class="meta">@NonNull</span> <span class="keyword">int</span>[] consumed)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>NestedScrollingParent3</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">NestedScrollingParent3</span> <span class="keyword">extends</span> <span class="title">NestedScrollingParent2</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">onNestedScroll</span><span class="params">(<span class="meta">@NonNull</span> View target, <span class="keyword">int</span> dxConsumed, <span class="keyword">int</span> dyConsumed, <span class="keyword">int</span> dxUnconsumed, <span class="keyword">int</span> dyUnconsumed, <span class="meta">@NestedScrollType</span> <span class="keyword">int</span> type, <span class="meta">@NonNull</span> <span class="keyword">int</span>[] consumed)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在自定义View时建议使用第三版的接口和辅助工具类（NestedScrollingParentHelper、NestedScrollingChildHelper）。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/project/tags/Android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/project/2019/12/06/android-source-touch/" rel="prev" title="Touch事件分发学习笔记">
+                  <i class="fa fa-chevron-left"></i> Touch事件分发学习笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/project/2019/12/11/android-source-coordinatorlayout/" rel="next" title="透过源码学习CoordinatorLayout与Behavior">
+                  透过源码学习CoordinatorLayout与Behavior <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Peceoqicka</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/project/js/comments.js"></script><script src="/project/js/utils.js"></script><script src="/project/js/motion.js"></script><script src="/project/js/next-boot.js"></script>
+
+  
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":"forest","js":{"url":"https://cdn.jsdelivr.net/npm/mermaid@8.13.2/dist/mermaid.min.js","integrity":"sha256-UIQPVkGifpwMvDH5yGgORJ9sSTDq38zz6BGU6dNaKhM="}}</script>
+  <script src="/project/js/third-party/tags/mermaid.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/project/js/third-party/math/mathjax.js"></script>
+
+
+
+<script src="/project/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","model":{"jsonPath":"/project/live2dw/assets/shizuku.model.json"},"display":{"superSample":2,"width":210,"height":420,"position":"right","hOffset":0,"vOffset":-20},"log":false,"tagMode":false});</script></body>
+</html>

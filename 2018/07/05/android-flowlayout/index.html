@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/project/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/project/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/project/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/project/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/project/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"peceoqicka.github.io","root":"/project/","images":"/project/images","scheme":"Pisces","darkmode":false,"version":"8.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/project/js/config.js"></script>
+<meta name="description" content="FlowLayout FlowLayout就是流式布局，为什么要起这么一个名字？因为大家都这么叫它，不管名字起得多么花哨，功能都是大同小异的。如图：    我为什么要实现流式布局？源于工作的需要，最近要做这么一个需求，有这么一些标签（数组，数量不确定，字数不确定），他们需要一个一个的往一个容器里边装，每个标签宽度不确定，如果标签在这一排放不下（剩余宽度不够），那么就要放到下一排。而且因为是数组，所">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android实现支持适配器的FlowLayout">
+<meta property="og:url" content="http://peceoqicka.github.io/project/2018/07/05/android-flowlayout/index.html">
+<meta property="og:site_name" content="Peceoqicka的博客">
+<meta property="og:description" content="FlowLayout FlowLayout就是流式布局，为什么要起这么一个名字？因为大家都这么叫它，不管名字起得多么花哨，功能都是大同小异的。如图：    我为什么要实现流式布局？源于工作的需要，最近要做这么一个需求，有这么一些标签（数组，数量不确定，字数不确定），他们需要一个一个的往一个容器里边装，每个标签宽度不确定，如果标签在这一排放不下（剩余宽度不够），那么就要放到下一排。而且因为是数组，所">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-07-05T07:13:11.000Z">
+<meta property="article:modified_time" content="2018-07-09T08:39:06.328Z">
+<meta property="article:author" content="Peceoqicka">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="Kotlin">
+<meta property="article:tag" content="ViewGroup">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://peceoqicka.github.io/project/2018/07/05/android-flowlayout/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://peceoqicka.github.io/project/2018/07/05/android-flowlayout/","path":"2018/07/05/android-flowlayout/","title":"Android实现支持适配器的FlowLayout"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Android实现支持适配器的FlowLayout | Peceoqicka的博客</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/project/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/project/atom.xml" title="Peceoqicka的博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/project/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Peceoqicka的博客</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/project/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/project/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/project/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/project/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#FlowLayout"><span class="nav-number">1.</span> <span class="nav-text">FlowLayout</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%88%91%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%AE%9E%E7%8E%B0%E6%B5%81%E5%BC%8F%E5%B8%83%E5%B1%80%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">我为什么要实现流式布局？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%82%A3%E4%B9%88%E5%BC%80%E5%A7%8B%E5%90%A7"><span class="nav-number">3.</span> <span class="nav-text">那么开始吧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%86%E6%9E%B6%E6%90%AD%E5%BB%BA"><span class="nav-number">3.1.</span> <span class="nav-text">框架搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%B8%83%E5%B1%80%E5%8F%82%E6%95%B0"><span class="nav-number">3.2.</span> <span class="nav-text">获取布局参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E9%87%8F"><span class="nav-number">3.3.</span> <span class="nav-text">测量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%83%E5%B1%80"><span class="nav-number">3.4.</span> <span class="nav-text">布局</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%91%E5%90%AC%E9%80%82%E9%85%8D%E5%99%A8%E5%88%B7%E6%96%B0"><span class="nav-number">3.5.</span> <span class="nav-text">监听适配器刷新</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Peceoqicka"
+      src="/project/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Peceoqicka</p>
+  <div class="site-description" itemprop="description">愿中国青年都摆脱冷气，只是向上走，不必听自暴自弃者的话.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/project/archives/">
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/project/categories/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/project/tags/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/peceoqicka" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://peceoqicka.github.io/project/2018/07/05/android-flowlayout/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/project/images/avatar.jpg">
+      <meta itemprop="name" content="Peceoqicka">
+      <meta itemprop="description" content="愿中国青年都摆脱冷气，只是向上走，不必听自暴自弃者的话.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Peceoqicka的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android实现支持适配器的FlowLayout
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-07-05 15:13:11" itemprop="dateCreated datePublished" datetime="2018-07-05T15:13:11+08:00">2018-07-05</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2018-07-09 16:39:06" itemprop="dateModified" datetime="2018-07-09T16:39:06+08:00">2018-07-09</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="FlowLayout"><a href="#FlowLayout" class="headerlink" title="FlowLayout"></a>FlowLayout</h1><blockquote>
+<p>FlowLayout就是流式布局，为什么要起这么一个名字？因为大家都这么叫它，不管名字起得多么花哨，功能都是大同小异的。如图：</p>
+</blockquote>
+
+
+<h1 id="我为什么要实现流式布局？"><a href="#我为什么要实现流式布局？" class="headerlink" title="我为什么要实现流式布局？"></a>我为什么要实现流式布局？</h1><p>源于工作的需要，最近要做这么一个需求，有这么一些标签（数组，数量不确定，字数不确定），他们需要一个一个的往一个容器里边装，每个标签宽度不确定，如果标签在这一排放不下（剩余宽度不够），那么就要放到下一排。而且因为是数组，所以首先联想到的就是Adapter。</p>
+<p>我也试着找寻官方提供的控件和第三方的开源框架，发现都没有完全满足我的需求的：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/google/flexbox-layout">FlexBoxLayout</a>，很强大的控件，但不支持适配器</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/hongyangAndroid/FlowLayout">FlowLayout</a>，大神写的控件，但是定制得太多</li>
+<li>还有一些其他的，我就不细说了</li>
+</ul>
+<p>我需要的是一个容器控件，能够支持适配器，负责它所有的ChildView的布局（不需要ChildView的缓存），ChildView的宽高不定，不能限定每一行放多少个ChildView，不需要任何方向的滚动。所以，综上，我还是自己定义吧，与此同时，也能在自己实现的过程中提高自己的开发能力。</p>
+<h1 id="那么开始吧"><a href="#那么开始吧" class="headerlink" title="那么开始吧"></a>那么开始吧</h1><p>自定义ViewGroup是老生常谈的话题，一个自定义ViewGroup的基本流程就是<em>获取布局参数-&gt;测量-&gt;布局</em></p>
+<h2 id="框架搭建"><a href="#框架搭建" class="headerlink" title="框架搭建"></a>框架搭建</h2><p>FlowLayout我使用Kotlin来实现，基础框架搭建如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FlowLayout</span> : <span class="type">ViewGroup &#123;</span></span></span><br><span class="line">    <span class="keyword">constructor</span>(context: Context, attrs: AttributeSet?, defStyleAttr: <span class="built_in">Int</span>) : <span class="keyword">super</span>(context, attrs, defStyleAttr) &#123;</span><br><span class="line">        getParams(context, attrs, defStyleAttr)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(context: Context, attrs: AttributeSet?) : <span class="keyword">this</span>(context, attrs, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">constructor</span>(context: Context) : <span class="keyword">this</span>(context, <span class="literal">null</span>)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="获取布局参数"><a href="#获取布局参数" class="headerlink" title="获取布局参数"></a>获取布局参数</h2><p>这里不需要过多的参数，只要两个，水平和竖直两个方向的边距：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">getParams</span><span class="params">(context: <span class="type">Context</span>, attrs: <span class="type">AttributeSet</span>?, defStyleAttr: <span class="type">Int</span>)</span></span> &#123;</span><br><span class="line">    context.obtainStyledAttributes(attrs, R.styleable.FlowLayout, defStyleAttr, <span class="number">0</span>).apply &#123;</span><br><span class="line">        columnSpace = getDimensionPixelSize(R.styleable.FlowLayout_fl_columnSpace, <span class="number">0</span>)</span><br><span class="line">        rowSpace = getDimensionPixelSize(R.styleable.FlowLayout_fl_rowSpace, <span class="number">0</span>)</span><br><span class="line">        recycle()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="测量"><a href="#测量" class="headerlink" title="测量"></a>测量</h2><p>测量的主要目的是告诉FlowLayout的父级容器，我FlowLayout要占多大的空间。首先父级会告诉我们，我的测量模式和预设宽高：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> widthMode = View.MeasureSpec.getMode(widthMeasureSpec)</span><br><span class="line"><span class="keyword">val</span> heightMode = View.MeasureSpec.getMode(heightMeasureSpec)</span><br><span class="line"><span class="keyword">val</span> widthSize = View.MeasureSpec.getSize(widthMeasureSpec)</span><br><span class="line"><span class="keyword">val</span> heightSize = View.MeasureSpec.getSize(heightMeasureSpec)</span><br></pre></td></tr></table></figure>
+<p>测量模式有且仅有三种：</p>
+<ul>
+<li>EXACTLY，“定了就这么多”，父级告诉自己一个确定的值</li>
+<li>AT_MOST，“最多就这么多了”，父级给定一个最大值</li>
+<li>UNSPECIFIED，“要多少有多少”，<strong>这种情况很少见</strong></li>
+</ul>
+<p>那么是不是在EXACTLY模式下，就不用测量了呢？当然不是，这里测量之后，还要给每个子View设置参数，方便在布局的时候计算每个子View放置的位置。</p>
+<p>在测量时，需要考虑左右的padding：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> availableWidth = widthSize - paddingStart - paddingEnd</span><br></pre></td></tr></table></figure>
+<p>测量子View时的基本方法是循环，在每次循环时判断是否需要换行，参考的依据就是，当前行已经占有的宽度加上当前ChildView要占据的宽度：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> childWidth = childView.measuredWidth + layoutParams.marginStart + layoutParams.marginEnd</span><br><span class="line"><span class="keyword">val</span> predictLineWidth = lineWidth + (<span class="keyword">if</span> (lineWidth == <span class="number">0</span>) childWidth <span class="keyword">else</span> (columnSpace + childWidth))</span><br><span class="line"><span class="keyword">if</span> (predictLineWidth &lt;= availableWidth) &#123;</span><br><span class="line">    <span class="comment">//不换行</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">//换行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为了便于布局，要在测量时，计算出每一个ChildView的行列号并赋值给相应的LayoutParams。因此我们需要自定义一个LayoutParams类：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">LayoutParams</span> : <span class="type">MarginLayoutParams &#123;</span></span></span><br><span class="line">    <span class="keyword">constructor</span>(context: Context, attrs: AttributeSet) : <span class="keyword">super</span>(context, attrs)</span><br><span class="line">    <span class="meta">@Suppress(<span class="meta-string">&quot;unused&quot;</span>)</span></span><br><span class="line">    <span class="keyword">constructor</span>(width: <span class="built_in">Int</span>, height: <span class="built_in">Int</span>) : <span class="keyword">super</span>(width, height)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(source: ViewGroup.LayoutParams) : <span class="keyword">super</span>(source)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> layoutColumn = <span class="number">0</span></span><br><span class="line">    <span class="keyword">var</span> layoutRow = <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>循环计算时，需要几个变量：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> maxLineWidth = <span class="number">0</span> <span class="comment">//最大行宽</span></span><br><span class="line"><span class="keyword">var</span> maxLineHeight = <span class="number">0</span> <span class="comment">//最大行高</span></span><br><span class="line"><span class="keyword">var</span> lineWidth = <span class="number">0</span> <span class="comment">//行宽</span></span><br><span class="line"><span class="keyword">var</span> totalHeight = <span class="number">0</span> <span class="comment">//所有行占用的总高度</span></span><br><span class="line"><span class="keyword">var</span> columnIndex = <span class="number">0</span> <span class="comment">//列顺序</span></span><br><span class="line"><span class="keyword">var</span> rowIndex = <span class="number">0</span> <span class="comment">//行顺序</span></span><br></pre></td></tr></table></figure>
+
+<p>循环计算的完整代码如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">(<span class="number">0</span> until childCount).forEach &#123;</span><br><span class="line">    <span class="keyword">val</span> childView = getChildAt(it)</span><br><span class="line">    measureChildWithMargins(childView, widthMeasureSpec, <span class="number">0</span>, heightMeasureSpec, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">val</span> layoutParams = childView.layoutParams <span class="keyword">as</span> FlowLayout.LayoutParams</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> childWidth = childView.measuredWidth + layoutParams.marginStart + layoutParams.marginEnd</span><br><span class="line">    <span class="keyword">val</span> childHeight = childView.measuredHeight + layoutParams.topMargin + layoutParams.bottomMargin</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> predictLineWidth = lineWidth + (<span class="keyword">if</span> (lineWidth == <span class="number">0</span>) childWidth <span class="keyword">else</span> (columnSpace + childWidth))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (predictLineWidth &lt;= availableWidth) &#123;</span><br><span class="line">        <span class="comment">//不换行</span></span><br><span class="line">        lineWidth = predictLineWidth</span><br><span class="line">        maxLineHeight = Math.max(maxLineHeight, childHeight)</span><br><span class="line"></span><br><span class="line">        layoutParams.layoutColumn = columnIndex</span><br><span class="line">        layoutParams.layoutRow = rowIndex</span><br><span class="line"></span><br><span class="line">        columnIndex++</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//换行</span></span><br><span class="line">        columnIndex = <span class="number">0</span></span><br><span class="line">        rowIndex++</span><br><span class="line">        maxLineWidth = Math.max(lineWidth, maxLineWidth)</span><br><span class="line">        totalHeight += (maxLineHeight + rowSpace)</span><br><span class="line">        lineHeightList.add(maxLineHeight)</span><br><span class="line"></span><br><span class="line">        layoutParams.layoutColumn = columnIndex</span><br><span class="line">        layoutParams.layoutRow = rowIndex</span><br><span class="line"></span><br><span class="line">        <span class="comment">//如果恰好是最后一行，最大行高值不应该置0，在循环完成之后补上最后一行的行高</span></span><br><span class="line">        maxLineHeight = <span class="keyword">if</span> (it == childCount - <span class="number">1</span>) maxLineHeight <span class="keyword">else</span> <span class="number">0</span></span><br><span class="line">        lineWidth = childWidth</span><br><span class="line">        columnIndex++</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">totalHeight += maxLineHeight</span><br><span class="line">lineHeightList.add(maxLineHeight)</span><br></pre></td></tr></table></figure>
+
+<p>其中有几个要点如下：</p>
+<ul>
+<li><p>循环完成之后要补上最后一行的行高</p>
+</li>
+<li><p>换行时将columnIndex置0，rowIndex加1，然后赋值给对应的LayoutParams，赋值完成之后一定要给columnIndex加1</p>
+</li>
+</ul>
+<h2 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h2><p>布局相对简单，因为大多数的工作前边测量时已经完成了：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">(<span class="number">0</span> until childCount).forEach &#123;</span><br><span class="line">    <span class="keyword">val</span> childView = getChildAt(it)</span><br><span class="line">    <span class="keyword">val</span> layoutParams = childView.layoutParams <span class="keyword">as</span> FlowLayout.LayoutParams</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> cLeft = paddingStart + layoutParams.marginStart + calculateLeftPosition(it, layoutParams.layoutColumn)</span><br><span class="line">    <span class="keyword">val</span> cTop = paddingTop + calculateTopPosition(it, layoutParams.layoutRow)</span><br><span class="line">    <span class="keyword">val</span> cRight = cLeft + childView.measuredWidth</span><br><span class="line">    <span class="keyword">val</span> cBottom = cTop + childView.measuredHeight</span><br><span class="line"></span><br><span class="line">    childView.layout(cLeft, cTop, cRight, cBottom)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在计算childView的左边的距离时，使用递归来计算，不要算上本身的左边距：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">calculateLeftPosition</span><span class="params">(layoutIndex: <span class="type">Int</span>, colIndex: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">if</span> (colIndex &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">val</span> previousChild = getChildAt(layoutIndex - <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">val</span> previousLayoutParams = previousChild.layoutParams <span class="keyword">as</span> FlowLayout.LayoutParams</span><br><span class="line">        <span class="keyword">val</span> previousWidth = previousChild.measuredWidth + previousLayoutParams.marginStart + previousLayoutParams.marginEnd</span><br><span class="line">        columnSpace + previousWidth + calculateLeftPosition(layoutIndex - <span class="number">1</span>, colIndex - <span class="number">1</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上边的距离则相对简单，原理同计算左边距：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">calculateTopPosition</span><span class="params">(layoutIndex: <span class="type">Int</span>, rowIndex: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">if</span> (rowIndex &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        rowSpace + lineHeightList[rowIndex] + calculateTopPosition(layoutIndex - <span class="number">1</span>, rowIndex - <span class="number">1</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="监听适配器刷新"><a href="#监听适配器刷新" class="headerlink" title="监听适配器刷新"></a>监听适配器刷新</h2><p>当我们在调用适配器的notifyDataSetChanged方法的时候，FlowLayout需要作出响应，刷新布局，因此，需要一个DataSetObserver：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">inner</span> <span class="class"><span class="keyword">class</span> <span class="title">AdapterDataSetObserver</span> : <span class="type">DataSetObserver</span></span>() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onChanged</span><span class="params">()</span></span> &#123;</span><br><span class="line">        resetData()</span><br><span class="line">        requestLayout()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onInvalidated</span><span class="params">()</span></span> &#123;</span><br><span class="line">        resetData()</span><br><span class="line">        requestLayout()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用<code>notifyDataSetChanged()</code>会触发这里的<code>onChanged()</code>方法，调用<code>notifyDataSetInvalidated()</code>会触发这里的<code>onInvalidated()</code>方法，但是还没完，写好了之后还要“注册”：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onAttachedToWindow</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.onAttachedToWindow()</span><br><span class="line">    <span class="keyword">if</span> ((adapter != <span class="literal">null</span>) and (adapterDataSetObserver == <span class="literal">null</span>)) &#123;</span><br><span class="line">        adapterDataSetObserver = AdapterDataSetObserver()</span><br><span class="line">        adapter?.registerDataSetObserver(adapterDataSetObserver)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在重设适配器时也需要重新“绑定”：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">setAdapter</span><span class="params">(adapter: <span class="type">BaseAdapter</span>?)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.adapter !== adapter) &#123;</span><br><span class="line">        <span class="keyword">this</span>.adapter?.let &#123; a -&gt;</span><br><span class="line">            adapterDataSetObserver?.let &#123; o -&gt;</span><br><span class="line">                a.unregisterDataSetObserver(o)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        adapter?.let &#123;</span><br><span class="line">            adapterDataSetObserver = AdapterDataSetObserver()</span><br><span class="line">            it.registerDataSetObserver(adapterDataSetObserver)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">this</span>.adapter = it.apply &#123;</span><br><span class="line">                (<span class="number">0</span> until <span class="keyword">this</span><span class="symbol">@apply</span>.count).forEach &#123;</span><br><span class="line">                    <span class="keyword">val</span> childView = <span class="keyword">this</span><span class="symbol">@apply</span>.getView(it, <span class="literal">null</span>, <span class="keyword">this</span><span class="symbol">@FlowLayout</span>)</span><br><span class="line">                    addView(childView,generateLayoutParams(childView.layoutParams))</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            requestLayout()</span><br><span class="line">        &#125; ?: let &#123;</span><br><span class="line">            <span class="keyword">this</span>.adapter = <span class="literal">null</span></span><br><span class="line">            removeAllViews()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>剩下的就没什么可说的了，当然这个FlowLayout设计肯定还是有缺陷的，以后会逐渐的改进</p>
+<p>Github地址：<a target="_blank" rel="noopener" href="https://github.com/peceoqicka/FlowLayoutDemo">https://github.com/peceoqicka/FlowLayoutDemo</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/project/tags/Android/" rel="tag"># Android</a>
+              <a href="/project/tags/Kotlin/" rel="tag"># Kotlin</a>
+              <a href="/project/tags/ViewGroup/" rel="tag"># ViewGroup</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/project/2018/03/14/javafx-1-basic/" rel="prev" title="JavaFx学习笔记（一）第一个桌面程序与Kotlin">
+                  <i class="fa fa-chevron-left"></i> JavaFx学习笔记（一）第一个桌面程序与Kotlin
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/project/2018/07/10/electron-1/" rel="next" title="Electron学习笔记（一）：入门到环境搭建">
+                  Electron学习笔记（一）：入门到环境搭建 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Peceoqicka</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/project/js/comments.js"></script><script src="/project/js/utils.js"></script><script src="/project/js/motion.js"></script><script src="/project/js/next-boot.js"></script>
+
+  
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":"forest","js":{"url":"https://cdn.jsdelivr.net/npm/mermaid@8.13.2/dist/mermaid.min.js","integrity":"sha256-UIQPVkGifpwMvDH5yGgORJ9sSTDq38zz6BGU6dNaKhM="}}</script>
+  <script src="/project/js/third-party/tags/mermaid.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/project/js/third-party/math/mathjax.js"></script>
+
+
+
+<script src="/project/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","model":{"jsonPath":"/project/live2dw/assets/shizuku.model.json"},"display":{"superSample":2,"width":210,"height":420,"position":"right","hOffset":0,"vOffset":-20},"log":false,"tagMode":false});</script></body>
+</html>
