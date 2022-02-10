@@ -3,11 +3,11 @@
   <title>Peceoqicka的博客</title>
   
   
-  <link href="http://peceoqicka.github.io/project/atom.xml" rel="self"/>
+  <link href="http://peceoqicka.github.io/atom.xml" rel="self"/>
   
-  <link href="http://peceoqicka.github.io/project/"/>
+  <link href="http://peceoqicka.github.io/"/>
   <updated>2022-02-10T02:56:41.914Z</updated>
-  <id>http://peceoqicka.github.io/project/</id>
+  <id>http://peceoqicka.github.io/</id>
   
   <author>
     <name>Peceoqicka</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>【程序实现】已知两条线的直线方程，求交点</title>
-    <link href="http://peceoqicka.github.io/project/2022/02/10/math_intersection_of_lines/"/>
-    <id>http://peceoqicka.github.io/project/2022/02/10/math_intersection_of_lines/</id>
+    <link href="http://peceoqicka.github.io/2022/02/10/math_intersection_of_lines/"/>
+    <id>http://peceoqicka.github.io/2022/02/10/math_intersection_of_lines/</id>
     <published>2022-02-10T01:30:00.000Z</published>
     <updated>2022-02-10T02:56:41.914Z</updated>
     
@@ -36,14 +36,14 @@
     
     
     
-    <category term="Math" scheme="http://peceoqicka.github.io/project/tags/Math/"/>
+    <category term="Math" scheme="http://peceoqicka.github.io/tags/Math/"/>
     
   </entry>
   
   <entry>
     <title>flutter学习笔记（一）：搭建开发环境</title>
-    <link href="http://peceoqicka.github.io/project/2019/12/25/flutter-1/"/>
-    <id>http://peceoqicka.github.io/project/2019/12/25/flutter-1/</id>
+    <link href="http://peceoqicka.github.io/2019/12/25/flutter-1/"/>
+    <id>http://peceoqicka.github.io/2019/12/25/flutter-1/</id>
     <published>2019-12-25T02:39:32.000Z</published>
     <updated>2019-12-26T03:14:27.079Z</updated>
     
@@ -58,17 +58,17 @@
     
     
     
-    <category term="Development" scheme="http://peceoqicka.github.io/project/categories/Development/"/>
+    <category term="Development" scheme="http://peceoqicka.github.io/categories/Development/"/>
     
     
-    <category term="Flutter" scheme="http://peceoqicka.github.io/project/tags/Flutter/"/>
+    <category term="Flutter" scheme="http://peceoqicka.github.io/tags/Flutter/"/>
     
   </entry>
   
   <entry>
     <title>透过源码学习CoordinatorLayout与Behavior</title>
-    <link href="http://peceoqicka.github.io/project/2019/12/11/android-source-coordinatorlayout/"/>
-    <id>http://peceoqicka.github.io/project/2019/12/11/android-source-coordinatorlayout/</id>
+    <link href="http://peceoqicka.github.io/2019/12/11/android-source-coordinatorlayout/"/>
+    <id>http://peceoqicka.github.io/2019/12/11/android-source-coordinatorlayout/</id>
     <published>2019-12-11T06:53:39.000Z</published>
     <updated>2020-01-19T07:09:43.080Z</updated>
     
@@ -84,14 +84,14 @@
     
     
     
-    <category term="Android" scheme="http://peceoqicka.github.io/project/tags/Android/"/>
+    <category term="Android" scheme="http://peceoqicka.github.io/tags/Android/"/>
     
   </entry>
   
   <entry>
     <title>Android NestedScroll 嵌套滑动机制学习笔记</title>
-    <link href="http://peceoqicka.github.io/project/2019/12/10/android-source-nestedscroll/"/>
-    <id>http://peceoqicka.github.io/project/2019/12/10/android-source-nestedscroll/</id>
+    <link href="http://peceoqicka.github.io/2019/12/10/android-source-nestedscroll/"/>
+    <id>http://peceoqicka.github.io/2019/12/10/android-source-nestedscroll/</id>
     <published>2019-12-10T01:34:18.000Z</published>
     <updated>2020-01-19T07:06:53.967Z</updated>
     
@@ -107,14 +107,14 @@
     
     
     
-    <category term="Android" scheme="http://peceoqicka.github.io/project/tags/Android/"/>
+    <category term="Android" scheme="http://peceoqicka.github.io/tags/Android/"/>
     
   </entry>
   
   <entry>
     <title>Touch事件分发学习笔记</title>
-    <link href="http://peceoqicka.github.io/project/2019/12/06/android-source-touch/"/>
-    <id>http://peceoqicka.github.io/project/2019/12/06/android-source-touch/</id>
+    <link href="http://peceoqicka.github.io/2019/12/06/android-source-touch/"/>
+    <id>http://peceoqicka.github.io/2019/12/06/android-source-touch/</id>
     <published>2019-12-06T08:24:35.000Z</published>
     <updated>2020-01-19T07:03:30.399Z</updated>
     
@@ -129,14 +129,14 @@
     
     
     
-    <category term="Android" scheme="http://peceoqicka.github.io/project/tags/Android/"/>
+    <category term="Android" scheme="http://peceoqicka.github.io/tags/Android/"/>
     
   </entry>
   
   <entry>
     <title>WheelLayoutManager——自定义轮式选择器布局</title>
-    <link href="http://peceoqicka.github.io/project/2019/08/27/wheellayoutmanager/"/>
-    <id>http://peceoqicka.github.io/project/2019/08/27/wheellayoutmanager/</id>
+    <link href="http://peceoqicka.github.io/2019/08/27/wheellayoutmanager/"/>
+    <id>http://peceoqicka.github.io/2019/08/27/wheellayoutmanager/</id>
     <published>2019-08-27T02:12:37.000Z</published>
     <updated>2019-08-28T03:16:21.084Z</updated>
     
@@ -151,18 +151,18 @@
     
     
     
-    <category term="Android" scheme="http://peceoqicka.github.io/project/tags/Android/"/>
+    <category term="Android" scheme="http://peceoqicka.github.io/tags/Android/"/>
     
-    <category term="Kotlin" scheme="http://peceoqicka.github.io/project/tags/Kotlin/"/>
+    <category term="Kotlin" scheme="http://peceoqicka.github.io/tags/Kotlin/"/>
     
-    <category term="RecyclerView" scheme="http://peceoqicka.github.io/project/tags/RecyclerView/"/>
+    <category term="RecyclerView" scheme="http://peceoqicka.github.io/tags/RecyclerView/"/>
     
   </entry>
   
   <entry>
     <title>记JavaFx中的那些坑</title>
-    <link href="http://peceoqicka.github.io/project/2018/07/27/javafx-2-trap/"/>
-    <id>http://peceoqicka.github.io/project/2018/07/27/javafx-2-trap/</id>
+    <link href="http://peceoqicka.github.io/2018/07/27/javafx-2-trap/"/>
+    <id>http://peceoqicka.github.io/2018/07/27/javafx-2-trap/</id>
     <published>2018-07-27T01:43:35.000Z</published>
     <updated>2018-07-27T07:01:36.444Z</updated>
     
@@ -177,16 +177,16 @@
     
     
     
-    <category term="Java" scheme="http://peceoqicka.github.io/project/tags/Java/"/>
+    <category term="Java" scheme="http://peceoqicka.github.io/tags/Java/"/>
     
-    <category term="JavaFx" scheme="http://peceoqicka.github.io/project/tags/JavaFx/"/>
+    <category term="JavaFx" scheme="http://peceoqicka.github.io/tags/JavaFx/"/>
     
   </entry>
   
   <entry>
     <title>Electron学习笔记（二）：UI开发</title>
-    <link href="http://peceoqicka.github.io/project/2018/07/12/electron-2/"/>
-    <id>http://peceoqicka.github.io/project/2018/07/12/electron-2/</id>
+    <link href="http://peceoqicka.github.io/2018/07/12/electron-2/"/>
+    <id>http://peceoqicka.github.io/2018/07/12/electron-2/</id>
     <published>2018-07-12T06:35:57.000Z</published>
     <updated>2018-07-12T06:55:26.593Z</updated>
     
@@ -202,22 +202,22 @@
     
     
     
-    <category term="Electron" scheme="http://peceoqicka.github.io/project/tags/Electron/"/>
+    <category term="Electron" scheme="http://peceoqicka.github.io/tags/Electron/"/>
     
-    <category term="HTML" scheme="http://peceoqicka.github.io/project/tags/HTML/"/>
+    <category term="HTML" scheme="http://peceoqicka.github.io/tags/HTML/"/>
     
-    <category term="Javascript" scheme="http://peceoqicka.github.io/project/tags/Javascript/"/>
+    <category term="Javascript" scheme="http://peceoqicka.github.io/tags/Javascript/"/>
     
-    <category term="CSS" scheme="http://peceoqicka.github.io/project/tags/CSS/"/>
+    <category term="CSS" scheme="http://peceoqicka.github.io/tags/CSS/"/>
     
-    <category term="Desktop" scheme="http://peceoqicka.github.io/project/tags/Desktop/"/>
+    <category term="Desktop" scheme="http://peceoqicka.github.io/tags/Desktop/"/>
     
   </entry>
   
   <entry>
     <title>Electron学习笔记（一）：入门到环境搭建</title>
-    <link href="http://peceoqicka.github.io/project/2018/07/10/electron-1/"/>
-    <id>http://peceoqicka.github.io/project/2018/07/10/electron-1/</id>
+    <link href="http://peceoqicka.github.io/2018/07/10/electron-1/"/>
+    <id>http://peceoqicka.github.io/2018/07/10/electron-1/</id>
     <published>2018-07-10T08:31:28.000Z</published>
     <updated>2018-07-10T09:26:41.013Z</updated>
     
@@ -233,22 +233,22 @@
     
     
     
-    <category term="Electron" scheme="http://peceoqicka.github.io/project/tags/Electron/"/>
+    <category term="Electron" scheme="http://peceoqicka.github.io/tags/Electron/"/>
     
-    <category term="HTML" scheme="http://peceoqicka.github.io/project/tags/HTML/"/>
+    <category term="HTML" scheme="http://peceoqicka.github.io/tags/HTML/"/>
     
-    <category term="Javascript" scheme="http://peceoqicka.github.io/project/tags/Javascript/"/>
+    <category term="Javascript" scheme="http://peceoqicka.github.io/tags/Javascript/"/>
     
-    <category term="CSS" scheme="http://peceoqicka.github.io/project/tags/CSS/"/>
+    <category term="CSS" scheme="http://peceoqicka.github.io/tags/CSS/"/>
     
-    <category term="Desktop" scheme="http://peceoqicka.github.io/project/tags/Desktop/"/>
+    <category term="Desktop" scheme="http://peceoqicka.github.io/tags/Desktop/"/>
     
   </entry>
   
   <entry>
     <title>Android实现支持适配器的FlowLayout</title>
-    <link href="http://peceoqicka.github.io/project/2018/07/05/android-flowlayout/"/>
-    <id>http://peceoqicka.github.io/project/2018/07/05/android-flowlayout/</id>
+    <link href="http://peceoqicka.github.io/2018/07/05/android-flowlayout/"/>
+    <id>http://peceoqicka.github.io/2018/07/05/android-flowlayout/</id>
     <published>2018-07-05T07:13:11.000Z</published>
     <updated>2018-07-09T08:39:06.328Z</updated>
     
@@ -264,18 +264,18 @@
     
     
     
-    <category term="Android" scheme="http://peceoqicka.github.io/project/tags/Android/"/>
+    <category term="Android" scheme="http://peceoqicka.github.io/tags/Android/"/>
     
-    <category term="Kotlin" scheme="http://peceoqicka.github.io/project/tags/Kotlin/"/>
+    <category term="Kotlin" scheme="http://peceoqicka.github.io/tags/Kotlin/"/>
     
-    <category term="ViewGroup" scheme="http://peceoqicka.github.io/project/tags/ViewGroup/"/>
+    <category term="ViewGroup" scheme="http://peceoqicka.github.io/tags/ViewGroup/"/>
     
   </entry>
   
   <entry>
     <title>JavaFx学习笔记（一）第一个桌面程序与Kotlin</title>
-    <link href="http://peceoqicka.github.io/project/2018/03/14/javafx-1-basic/"/>
-    <id>http://peceoqicka.github.io/project/2018/03/14/javafx-1-basic/</id>
+    <link href="http://peceoqicka.github.io/2018/03/14/javafx-1-basic/"/>
+    <id>http://peceoqicka.github.io/2018/03/14/javafx-1-basic/</id>
     <published>2018-03-14T01:28:05.000Z</published>
     <updated>2018-03-14T08:55:13.150Z</updated>
     
@@ -289,21 +289,21 @@
     
     
     
-    <category term="Development" scheme="http://peceoqicka.github.io/project/categories/Development/"/>
+    <category term="Development" scheme="http://peceoqicka.github.io/categories/Development/"/>
     
     
-    <category term="Kotlin" scheme="http://peceoqicka.github.io/project/tags/Kotlin/"/>
+    <category term="Kotlin" scheme="http://peceoqicka.github.io/tags/Kotlin/"/>
     
-    <category term="Java" scheme="http://peceoqicka.github.io/project/tags/Java/"/>
+    <category term="Java" scheme="http://peceoqicka.github.io/tags/Java/"/>
     
-    <category term="JavaFx" scheme="http://peceoqicka.github.io/project/tags/JavaFx/"/>
+    <category term="JavaFx" scheme="http://peceoqicka.github.io/tags/JavaFx/"/>
     
   </entry>
   
   <entry>
     <title>Databinding踩坑记录</title>
-    <link href="http://peceoqicka.github.io/project/2018/01/25/android-binding-trouble-log/"/>
-    <id>http://peceoqicka.github.io/project/2018/01/25/android-binding-trouble-log/</id>
+    <link href="http://peceoqicka.github.io/2018/01/25/android-binding-trouble-log/"/>
+    <id>http://peceoqicka.github.io/2018/01/25/android-binding-trouble-log/</id>
     <published>2018-01-25T06:57:39.000Z</published>
     <updated>2018-03-14T08:54:47.221Z</updated>
     
@@ -317,19 +317,19 @@
     
     
     
-    <category term="Development" scheme="http://peceoqicka.github.io/project/categories/Development/"/>
+    <category term="Development" scheme="http://peceoqicka.github.io/categories/Development/"/>
     
     
-    <category term="Android" scheme="http://peceoqicka.github.io/project/tags/Android/"/>
+    <category term="Android" scheme="http://peceoqicka.github.io/tags/Android/"/>
     
-    <category term="DataBinding" scheme="http://peceoqicka.github.io/project/tags/DataBinding/"/>
+    <category term="DataBinding" scheme="http://peceoqicka.github.io/tags/DataBinding/"/>
     
   </entry>
   
   <entry>
     <title>博客搭建记录</title>
-    <link href="http://peceoqicka.github.io/project/2018/01/24/blog-build/"/>
-    <id>http://peceoqicka.github.io/project/2018/01/24/blog-build/</id>
+    <link href="http://peceoqicka.github.io/2018/01/24/blog-build/"/>
+    <id>http://peceoqicka.github.io/2018/01/24/blog-build/</id>
     <published>2018-01-24T07:39:50.000Z</published>
     <updated>2021-09-27T09:03:21.000Z</updated>
     
@@ -344,17 +344,17 @@
     
     
     
-    <category term="Development" scheme="http://peceoqicka.github.io/project/categories/Development/"/>
+    <category term="Development" scheme="http://peceoqicka.github.io/categories/Development/"/>
     
     
-    <category term="Log" scheme="http://peceoqicka.github.io/project/tags/Log/"/>
+    <category term="Log" scheme="http://peceoqicka.github.io/tags/Log/"/>
     
   </entry>
   
   <entry>
     <title>Markdown支持度测试</title>
-    <link href="http://peceoqicka.github.io/project/2018/01/23/markdown-syntax/"/>
-    <id>http://peceoqicka.github.io/project/2018/01/23/markdown-syntax/</id>
+    <link href="http://peceoqicka.github.io/2018/01/23/markdown-syntax/"/>
+    <id>http://peceoqicka.github.io/2018/01/23/markdown-syntax/</id>
     <published>2018-01-23T08:11:12.000Z</published>
     <updated>2018-01-24T07:36:38.000Z</updated>
     
@@ -369,10 +369,10 @@
     
     
     
-    <category term="Development" scheme="http://peceoqicka.github.io/project/categories/Development/"/>
+    <category term="Development" scheme="http://peceoqicka.github.io/categories/Development/"/>
     
     
-    <category term="Markdown" scheme="http://peceoqicka.github.io/project/tags/Markdown/"/>
+    <category term="Markdown" scheme="http://peceoqicka.github.io/tags/Markdown/"/>
     
   </entry>
   
